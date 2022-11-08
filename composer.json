@@ -3,7 +3,7 @@
     "description": "Algorithmic.Cash PHP Library",
     "type": "library",
     "minimum-stability": "dev",
-    "version": "1.0.1",
+    "version": "1.0.3",
     "license": "GPL-3.0-or-later",
     "require": {
         "drlecks/simple-web3-php": "^0.9.0",
