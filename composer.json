@@ -1,0 +1,17 @@
+{
+    "name": "chep/php-alghocash",
+    "description": "Alghorithmic.Cash PHP Library",
+    "type": "library",
+    "minimum-stability": "dev",
+    "require": {
+        "drlecks/simple-web3-php": "^0.9.0",
+        "vlucas/phpdotenv": "^5.4",
+        "kornrunner/solidity": "^0.2.0",
+        "web3p/web3.php": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "AlgorithmicCash\\": "lib/"
+        }
+    }
+}
