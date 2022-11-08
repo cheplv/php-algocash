@@ -1,6 +1,6 @@
 {
-    "name": "chep/php-alghocash",
-    "description": "Alghorithmic.Cash PHP Library",
+    "name": "chep/php-algocash",
+    "description": "Algorithmic.Cash PHP Library",
     "type": "library",
     "minimum-stability": "dev",
     "version": "1.0.0",
@@ -8,11 +8,18 @@
         "drlecks/simple-web3-php": "^0.9.0",
         "vlucas/phpdotenv": "^5.4",
         "kornrunner/solidity": "^0.2.0",
-        "web3p/web3.php": "dev-master"
+        "web3p/web3.php": "dev-master",
+        "guzzlehttp/guzzle": "^7.4"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9"
     },
     "autoload": {
         "psr-4": {
-            "AlgorithmicCash\\": "lib/"
+            "AlghorithmicCash\\": "lib/"
         }
+    },
+    "scripts": {
+        "tests": "./vendor/bin/phpunit --testdox --prepend tests/config.php tests"
     }
 }

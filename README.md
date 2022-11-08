@@ -1,2 +1,2 @@
-# php-alghocash
-Alghorithmic.Cash PHP Library
+# php-algocash
+Algorithmic.Cash PHP Library
