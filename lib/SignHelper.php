@@ -14,7 +14,7 @@ class SignHelper {
     public $sweb3;
     private $secp256k1;
 
-    public function __construct($privateKey, $rpcUrl) {
+    public function __construct($privateKey, $rpcUrl = "") {
         $this->privateKey = $privateKey;
         $this->rpcUrl = $rpcUrl;
         $this->account = Accounts::privateKeyToAccount($privateKey);
