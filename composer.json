@@ -1,5 +1,5 @@
 {
-    "name": "chep/php-algocash",
+    "name": "cheplv/php-algocash",
     "description": "Algorithmic.Cash PHP Library",
     "license": "GPL-3.0-or-later",
     "require": {
