@@ -97,9 +97,36 @@ class PayInRequest {
         $request = $this->getRequestVars();
         $requestSignature = $this->getRequestSignature();
 
-        var_dump($request, $requestSignature);
+        $c = curl_init();
 
-        $response = "";
+        curl_setopt_array($c, array(
+            CURLOPT_URL => "https://api.algorithmic.cash".'/request_payin.php?merchant_id='.$this->merchantId,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 10,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => json_encode($request),
+            CURLOPT_HTTPHEADER => array(
+                'X-Signature: '.$requestSignature,
+                'Content-Type: application/json'
+            ),
+        ));
+
+        $response = curl_exec($c);
+        $responseInfo = curl_getinfo($c);
+        curl_close($c);
+
+        if (!$response) {
+            $response = json_encode([
+                'response' => PaymentResult::FAIL,
+                'error' => 'Server timeout waiting for response'
+            ]);
+        }
+
         return new PayInResponse($response);
     }
 
