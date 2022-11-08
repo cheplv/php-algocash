@@ -39,7 +39,6 @@ class PayInTest extends TestCase {
 
         $request = $payInRequest->getRequestVars();
         $requestSignature = $payInRequest->getRequestSignature();
-        var_dump($request, $requestSignature);
 
         $this->assertEquals($merchantTxId, $request['merchant_tx_id']);
         $this->assertEquals($requestAmount, $request['request_amount']);
