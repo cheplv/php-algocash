@@ -1,0 +1,9 @@
+<?php
+namespace AlgorithmicCash;
+
+class PaymentStatus {
+    const ProcessingNotAvailable = -2;
+    const InvalidRequest = -1;
+    const PaymentSuccess = 1;
+    const PaymentSettled = 2;
+}

@@ -3,6 +3,7 @@ namespace AlgorithmicCash;
 
 use AlgorithmicCash\PayInResponse;
 use AlgorithmicCash\SignHelper;
+use Web3\Utils;
 
 class PayInRequest {
     private $privateKey = "";
@@ -16,8 +17,8 @@ class PayInRequest {
         'merchant_tx_id'=> "",
         'customerEmailHash' => "",
 
-        'amount' => 0,
-        'request_amount' => 0,
+        'amount' => "0",
+        'request_amount' => "0",
 
         'traderAddress'=> "",
         // Automatic generation
@@ -35,7 +36,7 @@ class PayInRequest {
         'signature'=> "",
     ];
 
-    private $payInUrl = "";
+    private string $payInUrl = "";
 
     public function __construct(string $merchantId, string $privateKey, string $rpcUrl = "") {
         $this->merchantId = $merchantId;
@@ -44,14 +45,59 @@ class PayInRequest {
         $this->signHelper = new SignHelper($privateKey, $rpcUrl);
     }
 
+    public function getPayInUrl() : string {
+        return $this->payInUrl;
+    }
     public function setPayInUrl(string $url) : PayInRequest {
         $this->payInUrl = $url;
         return $this;
     }
 
-    public function send(): PayInResponse {
-        $this->request['timestamp'] = time();
+    public function getRequestVars() : array {
+        if (!$this->request['timestamp']) {
+            $this->request['timestamp'] = time();
+        }
         $this->request['customerEmailHash'] = "0x".hash('sha256', $this->merchantId."::".$this->customerEmail);
+
+        $paramsHash = $this->signHelper->hashMessage([
+            $this->request['customerEmailHash'],
+            $this->request['amount'],
+            $this->request['merchant_tx_id'],
+        ]);
+
+        $paramsSignatureHash = $this->signHelper->hashMessage([$this->merchantId, $paramsHash]);
+        $paramsSignature = $this->signHelper->generateSignature($paramsSignatureHash);
+        
+        $this->request['signature'] = $paramsSignature;
+
+        return $this->request;
+    }
+
+    public function getRequestSignature() : string {
+        $request = $this->getRequestVars();
+
+        $requestHash = "algorithmic-" . $this->signHelper->hashMessage([
+            $request['customerEmailHash'],
+            $request['amount'],
+            $request['traderAddress'],
+            $request['merchant_tx_id'],
+            $request['success_url'],
+            $request['failure_url'],
+            $request['return_url'],
+            $request['support_url'],
+            $request['ipn_url'],
+            $request['signature'],
+            $request['timestamp'],
+        ]);
+
+        return $this->signHelper->generateSignature($requestHash);
+    }
+
+    public function send(): PayInResponse {
+        $request = $this->getRequestVars();
+        $requestSignature = $this->getRequestSignature();
+
+        var_dump($request, $requestSignature);
 
         $response = "";
         return new PayInResponse($response);
@@ -67,8 +113,9 @@ class PayInRequest {
         return $this;
     }
 
-    public function setAmount(int $amount) : PayInRequest {
-        $this->request['amount'] = $amount;
+    public function setAmount(string $amount) : PayInRequest {
+        $this->request['request_amount'] = (string) $amount;
+        $this->request['amount'] = Utils::toWei($amount, 'ether')->toString();
         return $this;
     }
 
@@ -87,7 +134,7 @@ class PayInRequest {
         return $this;
     }
 
-    public function setCallbackUrl(string $url) : PayInRequest {
+    public function setHandlerUrl(string $url) : PayInRequest {
         $this->request['ipn_url'] = $url;
         return $this;
     }

@@ -3,9 +3,9 @@ namespace AlgorithmicCash;
 
 use SWeb3\SWeb3;
 use SWeb3\Accounts;
-use SWeb3\Account;
 use kornrunner\Secp256k1;
-use kornrunner\Solidity;
+// use kornrunner\Solidity;
+// use SWeb3\Account;
 
 class SignHelper {
     private $privateKey = '';
