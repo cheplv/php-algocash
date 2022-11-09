@@ -36,7 +36,7 @@ class PayInRequest {
         'signature'=> "",
     ];
 
-    private string $payInUrl = "";
+    private $payInUrl = "";
 
     public function __construct(string $merchantId, string $privateKey, string $rpcUrl = "") {
         $this->merchantId = $merchantId;
@@ -121,6 +121,7 @@ class PayInRequest {
         curl_close($c);
 
         if (!$response) {
+            error_log('Empty Response: ' . json_encode([$response, $responseInfo]));
             $response = json_encode([
                 'response' => PaymentResult::FAIL,
                 'error' => 'Server timeout waiting for response'
