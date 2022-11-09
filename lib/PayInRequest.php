@@ -111,8 +111,8 @@ class PayInRequest {
             CURLOPT_CUSTOMREQUEST => 'POST',
             CURLOPT_POSTFIELDS => json_encode($request),
             CURLOPT_HTTPHEADER => array(
-                'X-Signature: '.$requestSignature,
-                'Content-Type: application/json'
+                'x-signature: '.$requestSignature,
+                'content-type: application/json'
             ),
         ));
 
@@ -121,11 +121,18 @@ class PayInRequest {
         curl_close($c);
 
         if (!$response) {
-            error_log('Empty Response: ' . json_encode([$response, $responseInfo]));
             $response = json_encode([
                 'response' => PaymentResult::FAIL,
                 'error' => 'Server timeout waiting for response'
             ]);
+        } else {
+            $responseJson = @json_decode($response);
+            if (is_null($responseJson)) {
+                $response = json_encode([
+                    'response' => PaymentResult::FAIL,
+                    'error' => 'Response not json: ' . $response,
+                ]);
+            }
         }
 
         return new PayInResponse($response);
