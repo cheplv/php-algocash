@@ -3,6 +3,7 @@ namespace AlgorithmicCash;
 
 use AlgorithmicCash\PayInResponse;
 use AlgorithmicCash\SignHelper;
+use AlgorithmicCash\PaymentUrl;
 use Web3\Utils;
 
 class PayInRequest {
@@ -100,7 +101,9 @@ class PayInRequest {
         $c = curl_init();
 
         curl_setopt_array($c, array(
-            CURLOPT_URL => "https://api.algorithmic.cash".'/request_payin.php?merchant_id='.$this->merchantId,
+            CURLOPT_URL => PaymentUrl::buildPayInUrl([
+                'merchant_id' => $this->merchantId
+            ]),
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
