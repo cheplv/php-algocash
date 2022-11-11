@@ -33,7 +33,7 @@ class SignHelper {
         return Accounts::verifySignatureWithAddress($message, $signature, $address);
     }
 
-    public function wei2eth($wei) {
+    public static function wei2eth($wei) {
         return bcdiv($wei,'1000000000000000000',2);
     }
 }

@@ -6,7 +6,7 @@ use AlgorithmicCash\PaymentResult;
 
 class PaymentResultTest extends TestCase {
 
-    public function testResultOK() {
+    public function testResultOk() {
         $this->assertEquals("Ok", PaymentResult::OK);
     }
 

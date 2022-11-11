@@ -4,7 +4,7 @@ namespace AlgorithmicCash\Tests;
 use PHPUnit\Framework\TestCase;
 use AlgorithmicCash\SignHelper;
 
-class SignatureHelperTest extends TestCase {
+class SignHelperTest extends TestCase {
     public function testSignHelperCreation() {
         $signHelper = new SignHelper($GLOBALS['acTestVars']['privateKey'], $GLOBALS['acTestVars']['rpcUrl']);
         $this->assertTrue(is_object($signHelper));
@@ -29,5 +29,11 @@ class SignatureHelperTest extends TestCase {
 
     public function testVerifySignature() {
         $this->assertTrue(true);
+    }
+
+    public function testWei2Eth() {
+        $eth = "100.00";
+        $wei = bcmul($eth, '1000000000000000000', 2);
+        $this->assertEquals($eth, SignHelper::wei2eth($wei));
     }
 }

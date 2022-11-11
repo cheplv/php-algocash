@@ -24,14 +24,24 @@ class PayHandler {
         if (!empty($_SERVER['HTTP_X_SIGNATURE'])) {
             $this->requestSignature = $_SERVER['HTTP_X_SIGNATURE'];
         } else {
-            $headers = getallheaders();
-            foreach ($headers as $header => $value) {
-                if (strtoupper($header) == "X-SIGNATURE") {
-                    $this->requestSignature = trim($value);
-                }
-            }
+            $this->requestSignature = $this->getSignatureFromHeaders();
         }
 
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getSignatureFromHeaders() : string {
+        $headers = getallheaders();
+        $signature = "";
+        foreach ($headers as $header => $value) {
+            if (strtoupper($header) == "X-SIGNATURE") {
+                $signature = trim($value);
+                break;
+            }
+        }
+        return $signature;
     }
 
     public function handleRequest() {

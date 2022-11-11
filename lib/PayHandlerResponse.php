@@ -27,6 +27,9 @@ class PayHandlerResponse {
         return $this;
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function send() {
         header('Content-Type: application/json');
         echo json_encode([

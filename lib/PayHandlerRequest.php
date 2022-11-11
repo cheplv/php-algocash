@@ -24,7 +24,7 @@ class PayHandlerRequest {
             'merchant_id',
             'merchant_tx_id',
             'tx_type',
-            'reference_no',
+            'timestamp',
             'status',
             'ipn_url',
         ];

@@ -19,7 +19,7 @@
         }
     },
     "scripts": {
-        "tests": "./vendor/bin/phpunit --testdox --prepend tests/config.php tests",
+        "tests": "./vendor/bin/phpunit --testdox --prepend tests/config.php --whitelist lib --coverage-html coverage tests",
         "dev-server": "php -S localhost:4000 -t server/",
         "dev-tunnel": "ngrok http 4000"
     }

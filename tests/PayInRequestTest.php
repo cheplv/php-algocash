@@ -6,7 +6,7 @@ use AlgorithmicCash\PayInRequest;
 use AlgorithmicCash\SignHelper;
 use Web3\Utils;
 
-class PayInTest extends TestCase {
+class PayInRequestTest extends TestCase {
     public function testPayInRequestInit() {
         $payInRequest = new PayInRequest(
             $GLOBALS['acTestVars']['merchantId'],
@@ -23,6 +23,7 @@ class PayInTest extends TestCase {
             $GLOBALS['acTestVars']['rpcUrl']);
 
         $merchantTxId = "ACT-" . time();
+        $requestEmail = "test@test.com";
         $requestAmount = "100";
         $successUrl = "https://test.case/success.html";
         $failureUrl = "https://test.case/failure.html";
@@ -31,6 +32,7 @@ class PayInTest extends TestCase {
 
         $payInRequest
             ->setMerchantTxId($merchantTxId)
+            ->setCustomerEmail($requestEmail)
             ->setAmount($requestAmount)
             ->setSuccessUrl($successUrl)
             ->setFailureUrl($failureUrl)

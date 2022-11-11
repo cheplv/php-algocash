@@ -46,9 +46,18 @@ class PayInRequest {
         $this->signHelper = new SignHelper($privateKey, $rpcUrl);
     }
 
+    /**
+     * @deprecated
+     * @codeCoverageIgnore
+     */
     public function getPayInUrl() : string {
         return $this->payInUrl;
     }
+
+    /**
+     * @deprecated
+     * @codeCoverageIgnore
+     */
     public function setPayInUrl(string $url) : PayInRequest {
         $this->payInUrl = $url;
         return $this;
@@ -94,6 +103,9 @@ class PayInRequest {
         return $this->signHelper->generateSignature($requestHash);
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function send(): PayInResponse {
         $request = $this->getRequestVars();
         $requestSignature = $this->getRequestSignature();
