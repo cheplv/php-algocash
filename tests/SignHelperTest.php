@@ -3,32 +3,46 @@ namespace AlgorithmicCash\Tests;
 
 use PHPUnit\Framework\TestCase;
 use AlgorithmicCash\SignHelper;
+use AlgorithmicCash\Accounts;
 
 class SignHelperTest extends TestCase {
+
+    private $testAccount;
+    private $testAccountSignHelper;
+
+    public function setUp() : void {
+        $this->testAccount = $GLOBALS['acTestVars']['testAccount'];
+        $this->testAccountSignHelper = new SignHelper($this->testAccount->privateKey);
+
+    }
     public function testSignHelperCreation() {
         $signHelper = new SignHelper($GLOBALS['acTestVars']['privateKey'], $GLOBALS['acTestVars']['rpcUrl']);
         $this->assertTrue(is_object($signHelper));
     }
 
-    public function testHashMessage() {
+    public function testHashParams() {
         $signHelper = new SignHelper($GLOBALS['acTestVars']['privateKey'], $GLOBALS['acTestVars']['rpcUrl']);
         $params = ['a', 'b', 'c'];
-        $paramsHash = $signHelper->hashMessage($params);
-        $this->assertEquals($GLOBALS['acTestVars']['testHashMessage'], $paramsHash);
+        $paramsHash = $signHelper->hashParams($params);
+        $testAccountHash = $this->testAccountSignHelper->hashParams($params);
+        $this->assertEquals($testAccountHash, $paramsHash);
     }
 
     public function testGenerateSignature() {
         $signHelper = new SignHelper($GLOBALS['acTestVars']['privateKey'], $GLOBALS['acTestVars']['rpcUrl']);
         $params = ['a', 'b', 'c'];
-        $paramsHash = $signHelper->hashMessage($params);
-
+        $paramsHash = $signHelper->hashParams($params);
         $signature = $signHelper->generateSignature($paramsHash);
-        $this->assertEquals($GLOBALS['acTestVars']['testGenerateSignature'], $signature);
+        $testSignature = $this->testAccountSignHelper->generateSignature($paramsHash);
+        $this->assertEquals($testSignature, $signature);
 
     }
 
     public function testVerifySignature() {
-        $this->assertTrue(true);
+        $params = ['a', 'b', 'c'];
+        $paramsHash = $this->testAccountSignHelper->hashParams($params);
+        $testSignature = $this->testAccountSignHelper->generateSignature($paramsHash);
+        $this->assertTrue($this->testAccountSignHelper->verifySignature($paramsHash, $testSignature, $this->testAccount->address));
     }
 
     public function testWei2Eth() {

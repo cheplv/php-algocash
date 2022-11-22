@@ -69,13 +69,13 @@ class PayInRequest {
         }
         $this->request['customerEmailHash'] = "0x".hash('sha256', $this->merchantId."::".$this->customerEmail);
 
-        $paramsHash = $this->signHelper->hashMessage([
+        $paramsHash = $this->signHelper->hashParams([
             $this->request['customerEmailHash'],
             $this->request['amount'],
             $this->request['merchant_tx_id'],
         ]);
 
-        $paramsSignatureHash = $this->signHelper->hashMessage([$this->merchantId, $paramsHash]);
+        $paramsSignatureHash = $this->signHelper->hashParams([$this->merchantId, $paramsHash]);
         $paramsSignature = $this->signHelper->generateSignature($paramsSignatureHash);
         
         $this->request['signature'] = $paramsSignature;
@@ -86,7 +86,7 @@ class PayInRequest {
     public function getRequestSignature() : string {
         $request = $this->getRequestVars();
 
-        $requestHash = "algorithmic-" . $this->signHelper->hashMessage([
+        $requestHash = "algorithmic-" . $this->signHelper->hashParams([
             $request['customerEmailHash'],
             $request['amount'],
             $request['traderAddress'],

@@ -21,8 +21,8 @@ class SignHelper {
         // $this->secp256k1 = new Secp256k1();
     }
 
-    public function hashMessage(array $order) {
-        return call_user_func_array('\kornrunner\Solidity::sha3', $order);
+    public function hashParams(array $params) {
+        return call_user_func_array('\kornrunner\Solidity::sha3', $params);
     }
     
     public function generateSignature(string $data) {

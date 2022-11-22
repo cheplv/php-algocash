@@ -47,4 +47,24 @@ class AccountsTest extends TestCase {
         $this->assertEquals($account->address, $publicAddress);
         $this->assertTrue(Accounts::verifySignatureWithPublicKey($message, $signature, $publicKey));
     }
+
+    public function testHashMessage() {
+        $message = "TEST_MESSAGE";
+        $hash = Accounts::hashMessage($message);
+        $this->assertEquals("f6bf13b7ad5a0ef5787a44122a3aaa01966876c37e58a33e7443f5267bc55ef6", $hash);
+    }
+
+    public function testHashMessageHex() {
+        $message = "0x01";
+        $hash = Accounts::hashMessage($message, true);
+        var_dump($hash);
+        $this->assertEquals("38fac6360805275eb58f90a0925a9c55477f73ceb68657f04a14ff9d16f9ea56", $hash);
+    }
+
+    public function testHashMessageHexInvalid() {
+        $message = "0x01test";
+        $hash = Accounts::hashMessage($message, true);
+        // Invalid hex string produces empty hash
+        $this->assertEquals("", $hash);
+    }
 }

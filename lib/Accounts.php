@@ -28,9 +28,9 @@ class Account
 	public /*string*/ $publicKey;
 	public /*string*/ $address;
 
-	public function sign(string $message)
+	public function sign(string $message, bool $forceHex = false)
 	{ 
-		$hash = Accounts::hashMessage($message);  
+		$hash = Accounts::hashMessage($message, $forceHex);
 		$signature = $this->signRaw($hash);
 		$signature->message = $message;
 
@@ -130,13 +130,23 @@ class Accounts
 	}
   
 
-	public static function hashMessage(string $message) : string
+	public static function hashMessage(string $message, bool $forceHex = false) : string
 	{
-		//"\x19Ethereum Signed Message:\n" + message.length + message and hashed using keccak256. 
-		if (substr($message, 0, 2) == '0x') $message  = substr($message, 2);
-		if(ctype_xdigit($message)) $message = hex2bin($message);
+
+		if ($forceHex) {
+			if (substr($message, 0, 2) == '0x') {
+				$message  = substr($message, 2);
+				if (ctype_xdigit($message)) {
+					$message = hex2bin($message);
+				} else {
+					return "";
+				}
+			}
+
+		}
 
 		$msglen = strlen($message);
+		//"\x19Ethereum Signed Message:\n" + message.length + message and hashed using keccak256.
 		$msg    = hex2bin("19") . "Ethereum Signed Message:" . hex2bin("0A") . $msglen . $message;
 		$hash   = Keccak::hash($msg, 256);
 
@@ -144,7 +154,7 @@ class Accounts
 
 		//web3.eth.accounts.hashMessage("Hello World")
  		//"0xa1de988600a42c4b4ab089b619297c17d53cffae5d5120d82d8a92d0bb3b78f2" 
-	} 
+	}
 
 
 	public static function ecKeyToAddress($pubEcKey) : string
@@ -163,7 +173,8 @@ class Accounts
 	public static function signedMessageToPublicKey(string $message, string $signature) : string
 	{
 		$msglen = strlen($message);
-		$hash   = Keccak::hash("\x19Ethereum Signed Message:\n{$msglen}{$message}", 256);
+		$msg = hex2bin("19") . "Ethereum Signed Message:" . hex2bin("0A") . $msglen . $message;
+		$hash   = Keccak::hash($msg, 256);
 		$sign   = ["r" => substr($signature, 2, 64), 
 				   "s" => substr($signature, 66, 64)];
 		$recid  = ord(hex2bin(substr($signature, 130, 2))) - 27; 

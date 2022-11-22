@@ -36,7 +36,7 @@ class PayHandlerRequest {
         }
 
         $merchantIdHash = hash('sha256',$this->request['merchant_id']);
-        $requestHash = "algorithmic-".$this->signHelper->hashMessage([
+        $requestHash = "algorithmic-".$this->signHelper->hashParams([
             $merchantIdHash,
             $this->request['ipn_url'],
             $this->request['merchant_tx_id'],

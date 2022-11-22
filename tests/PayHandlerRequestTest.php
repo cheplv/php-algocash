@@ -86,10 +86,10 @@ class PayHandlerRequestTest extends TestCase {
         $this->assertTrue(true);
     }
 
-    public function testGetParamNotEmpty() {
-        $this->assertNotEmpty($this->testRequest->getParam('merchant_id'));
+    public function testGetParamIsString() {
+        $this->assertIsString($this->testRequest->getParam('merchant_id'));
     }
-    
+
     public function testGetParamNotExists() {
         $this->assertNull($this->testRequest->getParam('not_exists_param'));
     }
@@ -104,6 +104,10 @@ class PayHandlerRequestTest extends TestCase {
 
     public function testGetMerchantId() {
         $this->assertIsString($this->testRequest->getMerchantId());
+    }
+
+    public function testGetMerchantIdEquals() {
+        $this->assertEquals($GLOBALS['acTestVars']['merchantId'], $this->testRequest->getMerchantId());
     }
 
     public function testGetMerchantTxId() {
