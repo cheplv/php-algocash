@@ -15,6 +15,7 @@ if (getenv('ALGOCASH_PRIVATEKEY') !== false) {
     $testAccount = Accounts::privateKeyToAccount(getenv('ALGOCASH_PRIVATEKEY'));
 } else {
     $testAccount = Accounts::create();
+    putenv('ALGOCASH_PRIVATEKEY='.$testAccount->privateKey);
 }
 
 if (getenv('ALGOCASH_PUBLICKEY') === false) {
