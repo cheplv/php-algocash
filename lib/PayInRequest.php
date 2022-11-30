@@ -108,8 +108,8 @@ class PayInRequest {
                         'x-signature' => $requestSignature,
                         'content-type' => 'application/json',
                     ],
-                    'body' => json_encode($request),
-                ],
+                    'body' => json_encode($request)
+                ]
             );
 
             if ($response->getStatusCode() != 200) {
