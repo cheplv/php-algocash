@@ -46,23 +46,6 @@ class PayInRequest {
         $this->signHelper = new SignHelper($privateKey, $rpcUrl);
     }
 
-    /**
-     * @deprecated
-     * @codeCoverageIgnore
-     */
-    public function getPayInUrl() : string {
-        return $this->payInUrl;
-    }
-
-    /**
-     * @deprecated
-     * @codeCoverageIgnore
-     */
-    public function setPayInUrl(string $url) : PayInRequest {
-        $this->payInUrl = $url;
-        return $this;
-    }
-
     public function getRequestVars() : array {
         if (!$this->request['timestamp']) {
             $this->request['timestamp'] = time();
@@ -103,54 +86,65 @@ class PayInRequest {
         return $this->signHelper->generateSignature($requestHash);
     }
 
-    /**
-     * @codeCoverageIgnore
-     */
     public function send(): PayInResponse {
         $request = $this->getRequestVars();
         $requestSignature = $this->getRequestSignature();
+        $result = json_encode([
+            'response' => PaymentResult::FAIL,
+            'error' => 'Unknown error',
+        ]);
 
-        $c = curl_init();
+        $client = PayHTTPClient::getClient();
+        try {
+            $response = $client->request(
+                'POST',
+                PaymentUrl::buildPayInUrl([
+                    'merchant_id' => $this->merchantId
+                ]),
+                [
+                    'verify' => false,
+                    'timeout' => 15,
+                    'headers' => [
+                        'x-signature' => $requestSignature,
+                        'content-type' => 'application/json',
+                    ],
+                    'body' => json_encode($request),
+                ],
+            );
 
-        curl_setopt_array($c, array(
-            CURLOPT_URL => PaymentUrl::buildPayInUrl([
-                'merchant_id' => $this->merchantId
-            ]),
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 10,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => json_encode($request),
-            CURLOPT_HTTPHEADER => array(
-                'x-signature: '.$requestSignature,
-                'content-type: application/json'
-            ),
-        ));
-
-        $response = curl_exec($c);
-        $responseInfo = curl_getinfo($c);
-        curl_close($c);
-
-        if (!$response) {
-            $response = json_encode([
-                'response' => PaymentResult::FAIL,
-                'error' => 'Server timeout waiting for response'
-            ]);
-        } else {
-            $responseJson = @json_decode($response);
-            if (is_null($responseJson)) {
-                $response = json_encode([
+            if ($response->getStatusCode() != 200) {
+                $result = json_encode([
                     'response' => PaymentResult::FAIL,
-                    'error' => 'Response not json: ' . $response,
+                    'error' => 'Status code invalid: ' . $response->getStatusCode(),
                 ]);
+            } else {
+                $responseData = $response->getBody()->getContents();
+                if (empty($responseData)) {
+                    $result = json_encode([
+                        'response' => PaymentResult::FAIL,
+                        'error' => 'Empty reponse received from server',
+                    ]);
+                }
+                else {
+                    $responseJson = @json_decode($responseData);
+                    if (is_null($responseJson)) {
+                        $result = json_encode([
+                            'response' => PaymentResult::FAIL,
+                            'error' => 'Response not json: ' . $responseData,
+                        ]);
+                    } else {
+                        $result = $responseData;
+                    }
+                }
             }
+        } catch (\Exception $ex) {
+            $result = json_encode([
+                'response' => PaymentResult::FAIL,
+                'error' => $ex->getMessage(),
+            ]);
         }
 
-        return new PayInResponse($response);
+        return new PayInResponse($result);
     }
 
     public function setMerchantTxId(string $txId) : PayInRequest {

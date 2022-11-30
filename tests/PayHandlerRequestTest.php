@@ -13,7 +13,7 @@ class PayHandlerRequestTest extends TestCase {
         $this->testTimestamp = time();
         $requestSignature = "0xTESTSIGNATURE";
         $requestData = json_encode([
-            'merchant_id' => $GLOBALS['acTestVars']['merchantId'],
+            'merchant_id' => getenv('ALGOCASH_MERCHANTID'),
             'merchant_tx_id' => '1',
             'tx_type' => PaymentType::TX_IN,
             'timestamp' => $this->testTimestamp,
@@ -21,13 +21,13 @@ class PayHandlerRequestTest extends TestCase {
             'ipn_url' => 'https://test.case/handler.php',
             'reference_no' => 0,
         ]);
-        $this->testRequest = new PayHandlerRequest($GLOBALS['acTestVars']['privateKey'], $GLOBALS['acTestVars']['pgKey'], $requestSignature, $requestData);
+        $this->testRequest = new PayHandlerRequest(getenv('ALGOCASH_PRIVATEKEY'), getenv('ALGOCASH_PGADDRESS'), $requestSignature, $requestData);
     }
 
     public function testPaymentRequestCreation() {
         $requestSignature = "0xTESTSIGNATURE";
         $requestData = json_encode(['test' => 'test1']);
-        $request = new PayHandlerRequest($GLOBALS['acTestVars']['privateKey'], $GLOBALS['acTestVars']['pgKey'], $requestSignature, $requestData);
+        $request = new PayHandlerRequest(getenv('ALGOCASH_PRIVATEKEY'), getenv('ALGOCASH_PGADDRESS'), $requestSignature, $requestData);
 
         $this->assertTrue(is_object($request));
     }
@@ -35,7 +35,7 @@ class PayHandlerRequestTest extends TestCase {
     public function testPaymentRequestIsValidEmptySignature() {
         $requestSignature = "";
         $requestData = json_encode(['test' => 'test1']);
-        $request = new PayHandlerRequest($GLOBALS['acTestVars']['privateKey'], $GLOBALS['acTestVars']['pgKey'], $requestSignature, $requestData);
+        $request = new PayHandlerRequest(getenv('ALGOCASH_PRIVATEKEY'), getenv('ALGOCASH_PGADDRESS'), $requestSignature, $requestData);
 
         $this->assertTrue(is_object($request));
         $this->assertFalse($request->isValid());
@@ -44,7 +44,7 @@ class PayHandlerRequestTest extends TestCase {
     public function testPaymentRequestIsValidEmptyData() {
         $requestSignature = "0xTESTSIGNATURE";
         $requestData = "";
-        $request = new PayHandlerRequest($GLOBALS['acTestVars']['privateKey'], $GLOBALS['acTestVars']['pgKey'], $requestSignature, $requestData);
+        $request = new PayHandlerRequest(getenv('ALGOCASH_PRIVATEKEY'), getenv('ALGOCASH_PGADDRESS'), $requestSignature, $requestData);
 
         $this->assertTrue(is_object($request));
         $this->assertFalse($request->isValid());
@@ -53,14 +53,14 @@ class PayHandlerRequestTest extends TestCase {
     public function testPaymentRequestIsValidFalseNoVars() {
         $requestSignature = "0xTESTSIGNATURE";
         $requestData = json_encode([
-            'merchant_id' => $GLOBALS['acTestVars']['merchantId'],
+            'merchant_id' => getenv('ALGOCASH_MERCHANTID'),
             'merchant_tx_id' => '1',
             'tx_type' => PaymentType::TX_IN,
             'timestamp' => time(),
             'status' => PaymentStatus::ProcessingNotAvailable,
             //'ipn_url' => 'https://test.case/handler.php',
         ]);
-        $request = new PayHandlerRequest($GLOBALS['acTestVars']['privateKey'], $GLOBALS['acTestVars']['pgKey'], $requestSignature, $requestData);
+        $request = new PayHandlerRequest(getenv('ALGOCASH_PRIVATEKEY'), getenv('ALGOCASH_PGADDRESS'), $requestSignature, $requestData);
 
         $this->assertTrue(is_object($request));
         $this->assertFalse($request->isValid());
@@ -69,14 +69,14 @@ class PayHandlerRequestTest extends TestCase {
     public function testPaymentRequestIsValidFalse() {
         $requestSignature = "0xTESTSIGNATURE";
         $requestData = json_encode([
-            'merchant_id' => $GLOBALS['acTestVars']['merchantId'],
+            'merchant_id' => getenv('ALGOCASH_MERCHANTID'),
             'merchant_tx_id' => '1',
             'tx_type' => PaymentType::TX_IN,
             'timestamp' => time(),
             'status' => PaymentStatus::ProcessingNotAvailable,
             'ipn_url' => 'https://test.case/handler.php',
         ]);
-        $request = new PayHandlerRequest($GLOBALS['acTestVars']['privateKey'], $GLOBALS['acTestVars']['pgKey'], $requestSignature, $requestData);
+        $request = new PayHandlerRequest(getenv('ALGOCASH_PRIVATEKEY'), getenv('ALGOCASH_PGADDRESS'), $requestSignature, $requestData);
 
         $this->assertTrue(is_object($request));
         $this->assertFalse($request->isValid());
@@ -107,7 +107,7 @@ class PayHandlerRequestTest extends TestCase {
     }
 
     public function testGetMerchantIdEquals() {
-        $this->assertEquals($GLOBALS['acTestVars']['merchantId'], $this->testRequest->getMerchantId());
+        $this->assertEquals(getenv('ALGOCASH_MERCHANTID'), $this->testRequest->getMerchantId());
     }
 
     public function testGetMerchantTxId() {

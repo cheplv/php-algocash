@@ -14,6 +14,10 @@ class PaymentStatusTest extends TestCase {
         $this->assertEquals(-1, PaymentStatus::InvalidRequest);
     }
 
+    public function testPaymentPending() {
+        $this->assertEquals(0, PaymentStatus::PaymentPending);
+    }
+
     public function testPaymentSuccess() {
         $this->assertEquals(1, PaymentStatus::PaymentSuccess);
     }

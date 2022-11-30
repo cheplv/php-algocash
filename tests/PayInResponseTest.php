@@ -45,7 +45,7 @@ class PayInResponseTest extends TestCase {
     }
 
     public function testParamValueNotExists() {
-        $this->assertNull($this->testResponse->getParam('not_exists'));
+        $this->assertEmpty($this->testResponse->getParam('not_exists'));
     }
 
     public function testParams() {

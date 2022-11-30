@@ -7,13 +7,14 @@
         "ext-curl": "*",
         "ext-bcmath": "*",
         "drlecks/simple-web3-php": "^0.9.0",
-        "vlucas/phpdotenv": "^5.4",
         "kornrunner/solidity": "^0.2.0",
-        "web3p/web3.php": "dev-master"
+        "web3p/web3.php": "dev-master",
+        "guzzlehttp/guzzle": "^7.5"
     },
     "require-dev": {
         "ext-pcov": "*",
-        "phpunit/phpunit": "^8"
+        "phpunit/phpunit": "^8",
+        "vlucas/phpdotenv": "^5.4"
     },
     "autoload": {
         "psr-4": {
@@ -21,8 +22,8 @@
         }
     },
     "scripts": {
-        "tests": "./vendor/bin/phpunit --testdox --prepend tests/config.php --whitelist lib --coverage-html coverage tests",
-        "dev-server": "php -S localhost:4000 -t server/",
+        "tests": "./vendor/bin/phpunit --testdox --prepend config.tests.php --whitelist lib --coverage-html coverage tests",
+        "dev-server": "PHP_CLI_SERVER_WORKERS=2 php -S localhost:4000 -t server/",
         "dev-tunnel": "ngrok http 4000"
     }
 }

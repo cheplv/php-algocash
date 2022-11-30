@@ -21,7 +21,7 @@ class PayInResponse {
 
     public function getParam($name) {
         if (!is_array($this->response) || !isset($this->response[$name])) {
-            return null;
+            return "";
         }
         return $this->response[$name];
     }

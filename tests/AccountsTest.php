@@ -56,15 +56,14 @@ class AccountsTest extends TestCase {
 
     public function testHashMessageHex() {
         $message = "0x01";
-        $hash = Accounts::hashMessage($message, true);
-        var_dump($hash);
+        $hash = Accounts::hashMessage($message);
         $this->assertEquals("38fac6360805275eb58f90a0925a9c55477f73ceb68657f04a14ff9d16f9ea56", $hash);
     }
 
     public function testHashMessageHexInvalid() {
         $message = "0x01test";
-        $hash = Accounts::hashMessage($message, true);
+        $hash = Accounts::hashMessage($message);
         // Invalid hex string produces empty hash
-        $this->assertEquals("", $hash);
+        $this->assertEquals('7763f62c3f41a2711e398650c4a50bf5b04d34a22bf6ec4876363c3354d18169', $hash);
     }
 }

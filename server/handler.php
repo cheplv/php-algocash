@@ -1,6 +1,6 @@
 <?php
-require_once('../vendor/autoload.php');
-require_once("../tests/config.php");
+require_once(__DIR__ . "/../vendor/autoload.php");
+require_once(__DIR__ . "/../config.tests.php");
 
 use AlgorithmicCash\PayHandler;
 use AlgorithmicCash\PayHandlerResponse;
@@ -8,14 +8,21 @@ use AlgorithmicCash\PaymentType;
 use AlgorithmicCash\PaymentStatus;
 use AlgorithmicCash\PaymentResult;
 
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    exit('Only POST method allowed. Current method: ' . $_SERVER['REQUEST_METHOD']);
+}
 
-$requestSignature = $_SERVER['HTTP_X_SIGNATURE'];
+$requestSignature = !empty($_SERVER['HTTP_X_SIGNATURE']) ? $_SERVER['HTTP_X_SIGNATURE'] : '';
 $requestData = file_get_contents('php://input');
 
 error_log('Handler: ' . json_encode([$_SERVER, $_GET, $_POST]));
 error_log('HandlerData: ' . $requestData);
 
-$handler = new PayHandler($GLOBALS['acTestVars']['privateKey'], $GLOBALS['acTestVars']['pgKey'], $requestSignature, $requestData);
+if (empty($requestSignature)) {
+    exit('Request signature is empty. No request header "X-Signature"');
+}
+
+$handler = new PayHandler(getenv('ALGOCASH_PRIVATEKEY'), getenv('ALGOCASH_PGADDRESS'), $requestSignature, $requestData);
 
 $request = $handler->handleRequest();
 

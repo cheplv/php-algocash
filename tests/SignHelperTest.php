@@ -11,17 +11,17 @@ class SignHelperTest extends TestCase {
     private $testAccountSignHelper;
 
     public function setUp() : void {
-        $this->testAccount = $GLOBALS['acTestVars']['testAccount'];
+        $this->testAccount = Accounts::privateKeyToAccount(getenv('ALGOCASH_PRIVATEKEY'));
         $this->testAccountSignHelper = new SignHelper($this->testAccount->privateKey);
 
     }
     public function testSignHelperCreation() {
-        $signHelper = new SignHelper($GLOBALS['acTestVars']['privateKey'], $GLOBALS['acTestVars']['rpcUrl']);
+        $signHelper = new SignHelper(getenv('ALGOCASH_PRIVATEKEY'), getenv('ALGOCASH_RPCURL'));
         $this->assertTrue(is_object($signHelper));
     }
 
     public function testHashParams() {
-        $signHelper = new SignHelper($GLOBALS['acTestVars']['privateKey'], $GLOBALS['acTestVars']['rpcUrl']);
+        $signHelper = new SignHelper(getenv('ALGOCASH_PRIVATEKEY'), getenv('ALGOCASH_RPCURL'));
         $params = ['a', 'b', 'c'];
         $paramsHash = $signHelper->hashParams($params);
         $testAccountHash = $this->testAccountSignHelper->hashParams($params);
@@ -29,7 +29,7 @@ class SignHelperTest extends TestCase {
     }
 
     public function testGenerateSignature() {
-        $signHelper = new SignHelper($GLOBALS['acTestVars']['privateKey'], $GLOBALS['acTestVars']['rpcUrl']);
+        $signHelper = new SignHelper(getenv('ALGOCASH_PRIVATEKEY'), getenv('ALGOCASH_RPCURL'));
         $params = ['a', 'b', 'c'];
         $paramsHash = $signHelper->hashParams($params);
         $signature = $signHelper->generateSignature($paramsHash);
@@ -43,6 +43,18 @@ class SignHelperTest extends TestCase {
         $paramsHash = $this->testAccountSignHelper->hashParams($params);
         $testSignature = $this->testAccountSignHelper->generateSignature($paramsHash);
         $this->assertTrue($this->testAccountSignHelper->verifySignature($paramsHash, $testSignature, $this->testAccount->address));
+    }
+
+    public function testVerifySignaturePartialHex() {
+        $message = "0x12b";
+        $testSignature = $this->testAccountSignHelper->generateSignature($message);
+        $this->assertTrue($this->testAccountSignHelper->verifySignature($message, $testSignature, $this->testAccount->address));
+    }
+
+    public function testVerifySignatureNonHex() {
+        $message = "0x12z";
+        $testSignature = $this->testAccountSignHelper->generateSignature($message);
+        $this->assertTrue($this->testAccountSignHelper->verifySignature($message, $testSignature, $this->testAccount->address));
     }
 
     public function testWei2Eth() {

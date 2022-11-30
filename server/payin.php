@@ -1,22 +1,20 @@
 <?php
-require_once("../vendor/autoload.php");
-require_once("../tests/config.php");
+require_once(__DIR__ . "/../vendor/autoload.php");
+require_once(__DIR__ . "/../config.tests.php");
 
 use AlgorithmicCash\PayInRequest;
 
 $merchantTxId = "TEST-" . time();
-$requestAmount = "100";
-$baseUrl = "https://" . $_SERVER["HTTP_HOST"];
+$requestAmount = "500";
+$baseUrl = "https://" . (!empty($_SERVER["HTTP_HOST"]) ? $_SERVER['HTTP_HOST'] : 'localhost');
 $customerEmail = "test@test.com";
 $successUrl = $baseUrl . "/client-result.php?status=success";
 $failureUrl = $baseUrl . "/client-result.php?status=failure";
 $handlerUrl = $baseUrl . "/handler.php";
-$iframeSrc = $baseUrl . "/empty.html";
-
-//error_log(json_encode($_SERVER));
+$iframeSrc = $baseUrl . "/empty.php";
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
-    $payInRequest = new PayInRequest($GLOBALS['acTestVars']['merchantId'], $GLOBALS['acTestVars']['privateKey'], $GLOBALS['acTestVars']['rpcUrl']);
+    $payInRequest = new PayInRequest(getenv('ALGOCASH_MERCHANTID'), getenv('ALGOCASH_PRIVATEKEY'), getenv('ALGOCASH_RPCURL'));
     $payInRequest
         ->setMerchantTxId($_POST['merchant_tx_id'])
         ->setCustomerEmail($_POST['customer_email'])
@@ -28,17 +26,13 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $payInResponse = $payInRequest->send();
     error_log($payInResponse->getResponse());
 
-
-
     //echo json_encode(['test' => 'OK']);
     $payInResponse->send();
     exit();
 }
 
 
-?>
-
-<!DOCTYPE html>
+?><!DOCTYPE html>
 <html>
     <head>
         <title>PayIn Tester</title>
@@ -101,6 +95,11 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         <div class="container-fluid h-100 pt-4">
             <div class="row h-100">
                 <div class="col-4">
+                    <div class="mb-3 row">
+                        <div class="col">
+                            <a href="index.php" class="btn btn-primary">Back</a>
+                        </div>
+                    </div>
                     <h3 class="text-center">Payin Variables</h3>
                     <form id="action_form" onsubmit="return processSubmit(event);">
                     <div class="mb-3 row">
@@ -157,7 +156,6 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                 <div class="col-8 overflow-hidden">
                     <iframe id="payment_frame" src="<?php echo $iframeSrc; ?>" class="w-100 h-100"></iframe>
                 </div>
-
             </div>
         </div>
         
