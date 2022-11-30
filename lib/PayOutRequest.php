@@ -47,12 +47,12 @@ class PayOutRequest {
     }
 
     public function getRequestVars() : array {
-        if (!$this->request['timestamp']) {
-            $this->request['timestamp'] = time();
+        if (empty($this->request['timestamp'])) {
+            $this->request['timestamp'] = "" . time();
         }
         $this->request['customerEmailHash'] = "0x".hash('sha256', $this->merchantId."::".$this->customerEmail);
 
-        $paramsInfoHash = "0x".hash('sha256', implode('::', [
+        $this->request['info_hash'] = "0x".hash('sha256', implode('::', [
             $this->merchantId,
             $this->request['request_amount'],
             $this->request['customerEmailHash'],
@@ -64,12 +64,10 @@ class PayOutRequest {
             $this->request['ipn_url'],
         ]));
 
-        $this->request['info_hash'] = $paramsInfoHash;
-
         $paramsHash = $this->signHelper->hashParams([
             $this->request['customerEmailHash'],
             $this->request['amount'],
-            $paramsInfoHash,
+            $this->request['info_hash'],
             $this->request['remark'],
             $this->request['merchant_tx_id'],
         ]);
