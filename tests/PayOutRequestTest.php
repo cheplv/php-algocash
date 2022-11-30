@@ -180,6 +180,6 @@ class PayOutRequestTest extends TestCase {
 
         $this->assertEquals(PaymentResult::OK, $response->getResponse());
         $this->assertEmpty($response->getError());
-        $this->assertEquals($reference_number, $response->getReferenceNumber());
+        $this->assertEquals($reference_number, $response->getReferenceNo());
     }
 }

@@ -18,7 +18,7 @@ class PayOutResponse {
         return $this->getParam('result');
     }
 
-    public function getReferenceNumber() {
+    public function getReferenceNo() {
         return $this->getParam('reference_no');
     }
 

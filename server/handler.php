@@ -46,20 +46,26 @@ switch($request->getTxType()) {
     case PaymentType::TX_IN:
         switch($request->getStatus()) {
             case PaymentStatus::ProcessingNotAvailable:
-                error_log('Processing not available this time');
+                // Update transaction to failure status
+                error_log('PayIN Processing not available this time');
                 break;
             case PaymentStatus::InvalidRequest:
-                error_log('User Sent invalid request');
+                // Update transaction to invalid status
+                error_log('PayIN API Sent invalid request');
+                break;
+            case PaymentStatus::PaymentPending:
+                // Update transaction to pending status
+                error_log('PayIN Payment is in progress');
                 break;
             case PaymentStatus::PaymentSuccess:
-                error_log('Payment processed succesfuly');
+                error_log('PayIN Payment processed succesfuly');
 
                 // Success payment additional variables
                 $dataReferenceNo = $request->getReferenceNo();
                 $dataCustomerHash = $request->getParam('customer_hash');
                 break;
             case PaymentStatus::PaymentSettled:
-                error_log('Payment settled to blockchain succesfuly');
+                error_log('PayIN Payment settled to blockchain succesfuly');
 
                 // Success settlement variables
                 $dataReferenceNo = $request->getReferenceNo();
@@ -72,20 +78,46 @@ switch($request->getTxType()) {
                 $dataRollingReserveReleaseDT = $request->getParam('rolling_reserve_release_dt');
                 break;
             default:
-            $responseResult = PaymentResult::FAIL;
-            $responseSuccess = 0;
-            $responseError = 'Unknown transaction status';
-            break;
+                $responseResult = PaymentResult::FAIL;
+                $responseSuccess = 0;
+                $responseError = 'Unknown transaction status';
+                break;
         }
         break;
     
     // Processing outgoing transaction
     case PaymentType::TX_OUT:
-        $responseResult = PaymentResult::FAIL;
-        $responseSuccess = 0;
-        $responseError = 'HANDLER FOR TX_OUT Not Implemented';
+        switch($request->getStatus()) {
+            case PaymentStatus::ProcessingNotAvailable:
+                // Set transaction to status failure
+                error_log('PayOUT Processing not available this time');
+                break;
+            case PaymentStatus::InvalidRequest:
+                // Set transaction to status invalid
+                error_log('PayOUT API Sent invalid request');
+                break;
+            case PaymentStatus::PaymentPending:
+                // Update transaction status
+                error_log('PayOUT Payment is in progress');
+                break;
+            case PaymentStatus::PaymentSuccess:
+                error_log('PayOUT Payment processed succesfuly');
+                // Success payout variables
+                $dataReferenceNo = $request->getReferenceNo();
+                break;
+            case PaymentStatus::PaymentSettled:
+                error_log('PayOUT Payment settled to blockchain succesfuly');
+                // Success payout settlements variables
+                $dataReferenceNo = $request->getReferenceNo();
+                break;
+            default:
+                $responseResult = PaymentResult::FAIL;
+                $responseSuccess = 0;
+                $responseError = 'Unknown transaction status';
+                break;
+        }
         break;
-    
+
     default:
         $responseResult = PaymentResult::FAIL;
         $responseSuccess = 0;
