@@ -12,4 +12,8 @@ class PaymentUrlTest extends TestCase {
     public function testBuildPayOutUrl() {
         $this->assertStringStartsWith(PaymentUrl::PAYOUT_URL, PaymentUrl::buildPayOutUrl(['test'=>'payout']));
     }
+
+    public function testBuildPayBalanceUrl() {
+        $this->assertStringStartsWith(PaymentUrl::PAYBALANCE_URL, PaymentUrl::buildPayBalanceUrl(['test'=>'payout']));
+    }
 }
