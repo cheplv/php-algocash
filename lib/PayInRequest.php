@@ -191,4 +191,13 @@ class PayInRequest {
         $this->request['ipn_url'] = $url;
         return $this;
     }
+
+    public function getRequestVar(string $name) {
+        return isset($this->request[$name]) ? $this->request[$name] : null;
+    }
+
+    public function setRequestVar(string $name, $value) : PayInRequest{
+        $this->request[$name] = $value;
+        return $this;
+    }
 }

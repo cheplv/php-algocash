@@ -215,4 +215,13 @@ class PayOutRequest {
         $this->request['beneficiary_ifsc_code'] = $ifscCode;
         return $this;
     }
+
+    public function getRequestVar(string $name) {
+        return isset($this->request[$name]) ? $this->request[$name] : null;
+    }
+
+    public function setRequestVar(string $name, $value) : PayOutRequest{
+        $this->request[$name] = $value;
+        return $this;
+    }
 }

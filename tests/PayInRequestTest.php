@@ -179,7 +179,23 @@ class PayInRequestTest extends TestCase {
         $payInRequest->setPayInUrl($customUrl);
         $this->assertIsObject($payInRequest);
         $this->assertEquals($customUrl, $payInRequest->getPayInUrl());
+    }
 
+    public function testCustomRequestVar() {
+        $varName = "mode";
+        $varValue = "2";
+
+        $payInRequest = new PayInRequest(
+            getenv('ALGOCASH_MERCHANTID'),
+            getenv('ALGOCASH_PRIVATEKEY'),
+            getenv('ALGOCASH_RPCURL'));
+        $this->assertIsObject($payInRequest);
+
+        $varResultValue = $payInRequest->getRequestVar($varName);
+        $this->assertNull($varResultValue);
+
+        $payInRequest->setRequestVar($varName, $varValue);
+        $this->assertEquals($varValue, $payInRequest->getRequestVar($varName));
     }
 
 }

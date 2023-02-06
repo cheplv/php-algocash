@@ -196,4 +196,21 @@ class PayOutRequestTest extends TestCase {
 
     }
 
+    public function testCustomRequestVar() {
+        $varName = "mode";
+        $varValue = "2";
+
+        $payOutRequest = new PayOutRequest(
+            getenv('ALGOCASH_MERCHANTID'),
+            getenv('ALGOCASH_PRIVATEKEY'),
+            getenv('ALGOCASH_RPCURL'));
+        $this->assertIsObject($payOutRequest);
+
+        $varResultValue = $payOutRequest->getRequestVar($varName);
+        $this->assertNull($varResultValue);
+
+        $payOutRequest->setRequestVar($varName, $varValue);
+        $this->assertEquals($varValue, $payOutRequest->getRequestVar($varName));
+    }
+
 }
