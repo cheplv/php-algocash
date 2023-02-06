@@ -46,6 +46,15 @@ class PayInRequest {
         $this->signHelper = new SignHelper($privateKey, $rpcUrl);
     }
 
+    public function getPayInUrl() : string {
+        return $this->payInUrl;
+    }
+
+    public function setPayInUrl(string $url) : PayInRequest {
+        $this->payInUrl = $url;
+        return $this;
+    }
+
     public function getRequestVars() : array {
         if (!$this->request['timestamp']) {
             $this->request['timestamp'] = time();
@@ -100,7 +109,7 @@ class PayInRequest {
                 'POST',
                 PaymentUrl::buildPayInUrl([
                     'merchant_id' => $this->merchantId
-                ]),
+                ], $this->payInUrl),
                 [
                     'verify' => false,
                     'timeout' => 15,

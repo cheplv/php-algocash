@@ -39,11 +39,22 @@ class PayOutRequest {
         'ipn_url'=> "",
     ];
 
+    private $payOutUrl = "";
+
     public function __construct(string $merchantId, string $privateKey, string $rpcUrl = "") {
         $this->merchantId = $merchantId;
         $this->privateKey = $privateKey;
         $this->rpcUrl = $rpcUrl;
         $this->signHelper = new SignHelper($privateKey, $rpcUrl);
+    }
+
+    public function getPayOutUrl() : string {
+        return $this->payOutUrl;
+    }
+
+    public function setPayOutUrl(string $url) : PayOutRequest {
+        $this->payOutUrl = $url;
+        return $this;
     }
 
     public function getRequestVars() : array {
@@ -112,7 +123,7 @@ class PayOutRequest {
                 'POST',
                 PaymentUrl::buildPayOutUrl([
                     'merchant_id' => $this->merchantId
-                ]),
+                ], $this->payOutUrl),
                 [
                     'verify' => false,
                     'timeout' => 15,

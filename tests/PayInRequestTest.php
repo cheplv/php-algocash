@@ -169,4 +169,17 @@ class PayInRequestTest extends TestCase {
         $this->assertEquals($redirect_url, $response->getRedirectUrl());
     }
 
+    public function testPayInCustomUrl() {
+        $payInRequest = new PayInRequest(
+            getenv('ALGOCASH_MERCHANTID'),
+            getenv('ALGOCASH_PRIVATEKEY'),
+            getenv('ALGOCASH_RPCURL'));
+
+        $customUrl = "https://api.algorithmic.cash/custom_payin_request.php";
+        $payInRequest->setPayInUrl($customUrl);
+        $this->assertIsObject($payInRequest);
+        $this->assertEquals($customUrl, $payInRequest->getPayInUrl());
+
+    }
+
 }

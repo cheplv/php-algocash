@@ -182,4 +182,18 @@ class PayOutRequestTest extends TestCase {
         $this->assertEmpty($response->getError());
         $this->assertEquals($reference_number, $response->getReferenceNo());
     }
+
+    public function testPayOutCustomUrl() {
+        $payOutRequest = new PayOutRequest(
+            getenv('ALGOCASH_MERCHANTID'),
+            getenv('ALGOCASH_PRIVATEKEY'),
+            getenv('ALGOCASH_RPCURL'));
+
+        $customUrl = "https://api.algorithmic.cash/custom_payout_request.php";
+        $payOutRequest->setPayOutUrl($customUrl);
+        $this->assertIsObject($payOutRequest);
+        $this->assertEquals($customUrl, $payOutRequest->getPayOutUrl());
+
+    }
+
 }
